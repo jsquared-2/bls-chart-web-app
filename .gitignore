@@ -2,9 +2,9 @@
 *.pdf
 
 # Ignoring Test Files
-test_main.css
-test_index.html
-test_main.js
+test_main*.css
+test_index*.html
+test_main*.js
 
 # Ignoring Misc Files
 TODO.md
