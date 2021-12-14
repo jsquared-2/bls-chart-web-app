@@ -1,3 +1,67 @@
+// Initalizing Function Variables
+var seriesID = "";
+var seriesIDArray = [];
+
+// Generate Series ID - Fixed Data Type
+function getSeriesID () {
+    let seriesStart = 'CE';
+    let seriesSeasonality = 'U'
+    let seriesSupersectorCodes = [00, 05, 06, 07, 08, 10, 20, 30, 31, 32, 40, 41, 42, 43, 44, 50, 55, 60, 65, 70, 80, 90];
+    let seriesIndustryCode = '000000';
+    let seriesDataTypes = '01'; 
+
+    for (let i = 0; i < seriesSupersectorCodes.length; i++) {
+        for (let j = 0; j < seriesSupersectorCodes.length - 1; j++) {
+            seriesID = `${seriesStart}${seriesSeasonality}${seriesSupersectorCodes[i]}${seriesIndustryCode}${seriesDataTypes}`;
+        }
+        seriesIDArray.push(seriesID);
+    }
+    return seriesIDArray;
+}
+
+// Calling the Function
+getSeriesID();
+
+// Initializing Function Variables
+var apiKey = '0';
+
+// Accessing the API Key
+function getAPIKey() {
+    let message = "If you have an API Key from the BLS, enter it here.";
+    apiKey = prompt(message);
+    // alert(apiKey);
+    return apiKey;
+}
+
+// Calling the Function
+getAPIKey();
+
+// Initializing Global Variables
+var requestURL = "";
+
+// Generate URL For Request
+function getURL(seriesID = seriesIDArray[0], apiKey = '0') {
+    let baseURL = "https://api.bls.gov/publicAPI/v2/timeseries/data/";
+    let seriesURL = seriesID
+    let apiURL = apiKey;
+
+    if (apiKey == '0') {
+        requestURL = `${baseURL}${seriesURL}`;
+        console.log(requestURL);
+    } else if (apiKey != 0) {
+        requestURL = `${baseURL}${seriesURL}?registrationkey=${apiURL}`;
+        console.log(requestURL);
+    } else {
+        console.log("A Request URL could not be generated");
+    }
+    return requestURL;   
+};
+
+// Calling the Function
+getURL(seriesIDArray[1], apiKey);
+
+// –––––––––––––––––––––––––
+
 // Chart Colors - Full Opacity (22 Colors)
 const chartColorsFull = {
     morningBlue: 'rgb(138, 163, 153)', // #1
@@ -240,7 +304,7 @@ const config = {
             },
             title: {
                 display: true,
-                text: 'US Employment Statistics From The US Bureau of Labor Statistics'
+                text: 'US Employment Statistics (Number of Employees in Thousands)'
             }
         }
     }
