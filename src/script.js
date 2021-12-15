@@ -30,7 +30,7 @@ var apiKey = "0";
 
 // Accessing the API Key
 function getAPIKey() {
-    let message = "If you have an API Key from the BLS, enter it here.";
+    let message = "If you have an API Key from the BLS, enter it here. Otherwise, enter 0.";
     apiKey = prompt(message);
     // alert(apiKey);
     return apiKey;
