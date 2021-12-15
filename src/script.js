@@ -1,26 +1,29 @@
 // Initalizing Function Variables
 var seriesID = "";
-var seriesIDArray = [];
 
 // Generate Series ID - Fixed Data Type
 function getSeriesID () {
     let seriesStart = 'CE';
     let seriesSeasonality = 'U'
     let seriesSupersectorCodes = [00, 05, 06, 07, 08, 10, 20, 30, 31, 32, 40, 41, 42, 43, 44, 50, 55, 60, 65, 70, 80, 90];
-    let seriesIndustryCode = '000000';
-    let seriesDataTypes = '01'; 
+    let seriesIndustryCode = '0000000';
+    let seriesDataType = '01';
+    var seriesIDInternalArray = []; 
 
     for (let i = 0; i < seriesSupersectorCodes.length; i++) {
         for (let j = 0; j < seriesSupersectorCodes.length - 1; j++) {
-            seriesID = `${seriesStart}${seriesSeasonality}${seriesSupersectorCodes[i]}${seriesIndustryCode}${seriesDataTypes}`;
+            seriesID = `${seriesStart}${seriesSeasonality}${seriesSupersectorCodes[i]}${seriesIndustryCode}${seriesDataType}`;
         }
-        seriesIDArray.push(seriesID);
+        seriesIDInternalArray.push(seriesID);
     }
-    return seriesIDArray;
-}
+    return seriesIDInternalArray;
+};
 
 // Calling the Function
 getSeriesID();
+
+// Initializing SeriesIDArray 
+var seriesIDArray = getSeriesID();
 
 // Initializing Function Variables
 var apiKey = '0';
@@ -34,7 +37,7 @@ function getAPIKey() {
 }
 
 // Calling the Function
-getAPIKey();
+//getAPIKey();
 
 // Initializing Global Variables
 var requestURL = "";
@@ -47,10 +50,10 @@ function getURL(seriesID = seriesIDArray[0], apiKey = '0') {
 
     if (apiKey == '0') {
         requestURL = `${baseURL}${seriesURL}`;
-        console.log(requestURL);
+        //console.log(requestURL);
     } else if (apiKey != 0) {
         requestURL = `${baseURL}${seriesURL}?registrationkey=${apiURL}`;
-        console.log(requestURL);
+        //console.log(requestURL);
     } else {
         console.log("A Request URL could not be generated");
     }
@@ -58,7 +61,79 @@ function getURL(seriesID = seriesIDArray[0], apiKey = '0') {
 };
 
 // Calling the Function
-getURL(seriesIDArray[1], apiKey);
+//getURL(seriesIDArray[0], apiKey);
+
+
+// Getting the Data Values For Each Super Sector
+function getSuperSectorValues(arrayValue = 0) { // The Array Value comes from the index value of the seriesIDArray
+    
+    // Making the XMLHttpRequest
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", responseReceivedHandlerValues);
+    xhr.responseType = "json";
+    xhr.open("GET", `${getURL(seriesIDArray[arrayValue], apiKey)}`)
+    xhr.send();
+
+    // Initializing Data Array For Chart
+    var dataValues;
+    var dataValuesArray = [];
+
+    // Handling the Response
+    function responseReceivedHandlerValues() {
+        if (this.status == 200) {
+            var dataArray = this.response.Results.series[0].data;
+            console.log(dataArray);
+            for (let l = 0; l < dataArray.length; l++) {
+                dataValues = dataArray[l].value;
+                //console.log(dataValues);
+                dataValuesArray.push(dataValues);
+                //console.log(dataValuesArray);
+            }
+        } else {
+            console.log("A response could not be received.");
+        }
+        //console.log(dataValuesArray);
+    };
+    return dataValuesArray;
+};
+
+// Getting the Dates for the Labels
+function getSuperSectorDates(arrayValue = 0) { // The Array Value comes from the index value of the seriesIDArray
+    // Making the XMLHttpRequest
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", responseReceivedHandlerDates);
+    xhr.responseType = "json";
+    xhr.open("GET", `${getURL(seriesIDArray[arrayValue], apiKey)}`)
+    xhr.send();
+    
+    // Initializing Dates Array For Chart
+    var monthValues;
+    var yearValues;
+    var dataDatesArray = [];
+
+    // Handling the Response
+    function responseReceivedHandlerDates() {
+        if (this.status == 200) {
+            var datesArray = this.response.Results.series[0].data;
+            for (let m = 0; m < datesArray.length; m++) {
+                monthValues = datesArray[m].periodName;
+                yearValues = datesArray[m].year;
+                dateString = `${monthValues} ${yearValues}`;
+                //console.log(dateString);
+                dataDatesArray.push(dateString);
+            }
+        } else {
+            console.log("A response could not be received.");
+        }
+        //console.log(dataDatesArray);
+    };
+    return dataDatesArray;
+};
+
+// –––––––––––––––––––––––––
+
+// Supersector Data Assignments
+//var totalNonfarm = getSuperSectorValues(18);
 
 // –––––––––––––––––––––––––
 
@@ -123,167 +198,167 @@ const chartColorsHalf = {
 };
 
 // Creating Chart Labels
-const labels = [
-    "Date 1", 
-    "Date 2", 
-    "Date 3", 
-    "Date 4", 
+const xlabels = [
+    "Date 1",
+    "Date 2",
+    "Date 3",
+    "Date 4",
     "Date 5"
-];
+]
 
 // Getting Chart Data
 const data = {
-    labels: labels,
+    labels: xlabels,
     datasets: [
         {
-            label: 'Supersector 1',
+            label: 'Total Nonfarm',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.morningBlue, 
             backgroundColor: chartColorsHalf.morningBlue,
             hidden: false
         },
         {
-            label: 'Supersector 2',
+            label: 'Total Private',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.rhythm, 
             backgroundColor: chartColorsHalf.rhythm,
             hidden: false
         },
         {
-            label: 'Supersector 3',
+            label: 'Goods-Producing',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.wildBlueYonder, 
             backgroundColor: chartColorsHalf.wildBlueYonder,
             hidden: false
         },
         {
-            label: 'Supersector 4',
+            label: 'Service-Providing',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.yellowGreenCrayola, 
             backgroundColor: chartColorsHalf.yellowGreenCrayola,
             hidden: false
         },
         {
-            label: 'Supersector 5',
+            label: 'Private Service-Providing',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.aeroBlue, 
             backgroundColor: chartColorsHalf.aeroBlue,
             hidden: false
         },
         {
-            label: 'Supersector 6',
+            label: 'Mining and Logging',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.silverPink, 
             backgroundColor: chartColorsHalf.silverPink,
             hidden: true
         },
         {
-            label: 'Supersector 7',
+            label: 'Construction',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.oldRose, 
             backgroundColor: chartColorsHalf.oldRose,
             hidden: true
         },
         {
-            label: 'Supersector 8',
+            label: 'Manufacturing',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.ruber, 
             backgroundColor: chartColorsHalf.ruber,
             hidden: true
         },
         {
-            label: 'Supersector 9',
+            label: 'Durable Goods',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.pearlyPurple, 
             backgroundColor: chartColorsHalf.pearlyPurple,
             hidden: true
         },
         {
-            label: 'Supersector 10',
+            label: 'Nondurable Goods',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.slateGray, 
             backgroundColor: chartColorsHalf.slateGray,
             hidden: true
         },
         {
-            label: 'Supersector 11',
+            label: 'Trade, Transportation, and Utilities',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.rust, 
             backgroundColor: chartColorsHalf.rust,
             hidden: true
         },
         {
-            label: 'Supersector 12',
+            label: 'Wholesale Trade',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.orangeRed, 
             backgroundColor: chartColorsHalf.orangeRed,
             hidden: true
         },
         {
-            label: 'Supersector 13',
+            label: 'Retail Trade',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.midnightBlue, 
             backgroundColor: chartColorsHalf.midnightBlue,
             hidden: true
         },
         {
-            label: 'Supersector 14',
+            label: 'Transportation and Warehousing',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.mediumTurquoise, 
             backgroundColor: chartColorsHalf.mediumTurquoise,
             hidden: true
         },
         {
-            label: 'Supersector 15',
+            label: 'Utilities',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.carnelian, 
             backgroundColor: chartColorsHalf.carnelian,
             hidden: true
         },
         {
-            label: 'Supersector 16',
+            label: 'Information',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.blackOlive, 
             backgroundColor: chartColorsHalf.blackOlive,
             hidden: true
         },
         {
-            label: 'Supersector 17',
+            label: 'Financial Activities',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.mountbattenPink, 
             backgroundColor: chartColorsHalf.mountbattenPink,
             hidden: true
         },
         {
-            label: 'Supersector 18',
+            label: 'Professional and Business Services',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.blastOffBronze, 
             backgroundColor: chartColorsHalf.blastOffBronze,
             hidden: true
         },
         {
-            label: 'Supersector 19',
+            label: 'Education and Healtht Services',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.antiqueRuby, 
             backgroundColor: chartColorsHalf.antiqueRuby,
             hidden: true
         },
         {
-            label: 'Supersector 20',
+            label: 'Leisure and Hospitality',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.bistre, 
             backgroundColor: chartColorsHalf.bistre,
             hidden: true
         },        
         {
-            label: 'Supersector 21',
+            label: 'Other Services',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.cafeAuLait, 
             backgroundColor: chartColorsHalf.cafeAuLait,
             hidden: true
         },        
         {
-            label: 'Supersector 22',
+            label: 'Government',
             data: [Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101), Math.floor(Math.random() * 101)],
             borderColor: chartColorsFull.glossyGrape, 
             backgroundColor: chartColorsHalf.glossyGrape,
