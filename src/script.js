@@ -1,11 +1,11 @@
 // Initalizing Function Variables
 var seriesID = "";
 
-// Generate Series ID - Fixed Data Type
+// Generating the Series ID
 function getSeriesID () {
     let seriesStart = "CE";
     let seriesSeasonality = "U"
-    let seriesSupersectorCodes = ["00", "05", "06", "07", "08", "10", "20", "30", "31", "32", "40", "41", "42", "43", "44", "50", "55", "60", "65", "70", "80", "90"]; // converted to strings because ints starting with zero turned into single digits
+    let seriesSupersectorCodes = ["00", "05", "06", "07", "08", "10", "20", "30", "31", "32", "40", "41", "42", "43", "44", "50", "55", "60", "65", "70", "80", "90"]; // Strings are used because numbers, when starting with zero, turned into single digits
     let seriesIndustryCode = "000000";
     let seriesDataType = "01";
     var seriesIDInternalArray = []; 
@@ -25,6 +25,8 @@ getSeriesID();
 // Initializing SeriesIDArray 
 var seriesIDArray = getSeriesID();
 
+// –––––––––––––––––––––––––
+
 // Initializing Function Variables
 var apiKey = "0";
 
@@ -32,14 +34,16 @@ var apiKey = "0";
 function getAPIKey() {
     let message = "If you have an API Key from the BLS, enter it here. Otherwise, enter 0.";
     apiKey = prompt(message);
-    // alert(apiKey);
+    //alert(apiKey);
     return apiKey;
 }
 
 // Calling the Function
 getAPIKey();
 
-// Initializing Global Variables
+// –––––––––––––––––––––––––
+
+// Initializing Function Variables
 var requestURL = "";
 
 // Generate URL For Request
@@ -60,8 +64,10 @@ function getURL(seriesID = seriesIDArray[0], apiKey = "0") {
     return requestURL;   
 };
 
-// Getting the Data Values For Each Super Sector
-function getSuperSectorValues(arrayValue = 0) { // The Array Value comes from the index value of the seriesIDArray
+// –––––––––––––––––––––––––
+
+// Getting the Data Values for each Supersector
+function getSuperSectorValues(arrayValue = 0) { // The arrayValue comes from the index value of the seriesIDArray
     
     // Making the XMLHttpRequest
     var xhr = new XMLHttpRequest();
@@ -70,7 +76,7 @@ function getSuperSectorValues(arrayValue = 0) { // The Array Value comes from th
     xhr.open("GET", `${getURL(seriesIDArray[arrayValue], apiKey)}`)
     xhr.send();
 
-    // Initializing Data Array For Chart
+    // Initializing Function Variables
     var dataValues;
     var dataValuesArray = [];
 
@@ -95,7 +101,8 @@ function getSuperSectorValues(arrayValue = 0) { // The Array Value comes from th
 };
 
 // Getting the Dates for the Labels
-function getSuperSectorDates(arrayValue = 0) { // The Array Value comes from the index value of the seriesIDArray
+function getSuperSectorDates(arrayValue = 0) { // The arrayValue comes from the index value of the seriesIDArray
+    
     // Making the XMLHttpRequest
     var xhr = new XMLHttpRequest();
     xhr.addEventListener("load", responseReceivedHandlerDates);
@@ -103,7 +110,7 @@ function getSuperSectorDates(arrayValue = 0) { // The Array Value comes from the
     xhr.open("GET", `${getURL(seriesIDArray[arrayValue], apiKey)}`)
     xhr.send();
     
-    // Initializing Dates Array For Chart
+    // Initializing Function Variables
     var monthValues;
     var yearValues;
     var dataDatesArray = [];
@@ -127,34 +134,6 @@ function getSuperSectorDates(arrayValue = 0) { // The Array Value comes from the
     };
     return dataDatesArray;
 };
-
-// –––––––––––––––––––––––––
-
-// Test Functions
-function printSERIES(){
-    console.log(`${seriesIDArray[0]} ${seriesIDArray[0].length} ${getSuperSectorValues(0)}`);
-    console.log(`${seriesIDArray[1]} ${seriesIDArray[1].length} ${getSuperSectorValues(1)}`);
-    console.log(`${seriesIDArray[2]} ${seriesIDArray[2].length} ${getSuperSectorValues(2)}`);
-    console.log(`${seriesIDArray[3]} ${seriesIDArray[3].length} ${getSuperSectorValues(3)}`);
-    console.log(`${seriesIDArray[4]} ${seriesIDArray[4].length} ${getSuperSectorValues(4)}`);
-    console.log(`${seriesIDArray[5]} ${seriesIDArray[5].length} ${getSuperSectorValues(5)}`);
-    console.log(`${seriesIDArray[6]} ${seriesIDArray[6].length} ${getSuperSectorValues(6)}`);
-    console.log(`${seriesIDArray[7]} ${seriesIDArray[7].length} ${getSuperSectorValues(7)}`);
-    console.log(`${seriesIDArray[8]} ${seriesIDArray[8].length} ${getSuperSectorValues(8)}`);
-    console.log(`${seriesIDArray[9]} ${seriesIDArray[9].length} ${getSuperSectorValues(9)}`);
-    console.log(`${seriesIDArray[10]} ${seriesIDArray[10].length} ${getSuperSectorValues(10)}`);
-    console.log(`${seriesIDArray[11]} ${seriesIDArray[11].length} ${getSuperSectorValues(11)}`);
-    console.log(`${seriesIDArray[12]} ${seriesIDArray[12].length} ${getSuperSectorValues(12)}`);
-    console.log(`${seriesIDArray[13]} ${seriesIDArray[13].length} ${getSuperSectorValues(13)}`);
-    console.log(`${seriesIDArray[14]} ${seriesIDArray[14].length} ${getSuperSectorValues(14)}`);
-    console.log(`${seriesIDArray[15]} ${seriesIDArray[15].length} ${getSuperSectorValues(15)}`);
-    console.log(`${seriesIDArray[16]} ${seriesIDArray[16].length} ${getSuperSectorValues(16)}`);
-    console.log(`${seriesIDArray[17]} ${seriesIDArray[17].length} ${getSuperSectorValues(17)}`);
-    console.log(`${seriesIDArray[18]} ${seriesIDArray[18].length} ${getSuperSectorValues(18)}`);
-    console.log(`${seriesIDArray[19]} ${seriesIDArray[19].length} ${getSuperSectorValues(19)}`);
-    console.log(`${seriesIDArray[20]} ${seriesIDArray[20].length} ${getSuperSectorValues(20)}`);
-    console.log(`${seriesIDArray[21]} ${seriesIDArray[21].length} ${getSuperSectorValues(21)}`);
-}
 
 // –––––––––––––––––––––––––
 
@@ -247,7 +226,7 @@ const chartColorsHalf = {
 // Creating Chart Labels
 const xlabels = getSuperSectorDates(0);
 
-// Getting Chart Data
+// Formatting Chart Data
 const data = {
     labels: xlabels,
     datasets: [
@@ -426,7 +405,7 @@ const config = {
     }
 };
 
-// Getting the Chart Element
+// Creating the Chart
 const blsChart = new Chart(
     document.getElementById("chart"),
     config
