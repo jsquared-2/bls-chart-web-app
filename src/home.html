@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Data Visualization of National Employment, Hours, and Earnings</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="main.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.js" integrity="sha512-CWVDkca3f3uAWgDNVzW+W4XJbiC3CH84P2aWZXj+DqI6PNbTzXbl1dIzEHeNJpYSn4B6U8miSZb/hCws7FnUZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script defer src="script.js"></script>
+    </head>
+    
+    <body>
+        <header>
+            <h1>US Employment Statistics From The US Bureau of Labor Statistics</h1>
+        </header>
+        
+        <div id="mainBody">
+            <p>Click on the box or label of the economic sector(s) for which you would like statistics<p>
+            
+            <div id="chartContainer">
+                <canvas id="chart">
+                </canvas>
+            </div>
+        </div>
+
+        <footer>
+            <p>&#169; 2021</p>
+            <p>BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.</p>
+        </footer>
+    </body>
+</html>
